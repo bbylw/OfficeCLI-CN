@@ -258,9 +258,9 @@ const agentPoints = [
             从零实现的 HTML 渲染引擎，让智能体「看见」渲染后的文档，而不是凭 DOM 猜。形状、图表、公式、3D 模型、morph 过渡全覆盖，CI、Docker、无显示器服务器都能跑。
           </p>
           <div class="mt-5 flex flex-wrap gap-2">
-            <span class="chip"><code class="code-inline !bg-transparent !p-0">view html</code> 独立 HTML</span>
-            <span class="chip"><code class="code-inline !bg-transparent !p-0">view screenshot</code> 按页 PNG</span>
-            <span class="chip"><code class="code-inline !bg-transparent !p-0">watch</code> 实时预览</span>
+            <span class="chip"><code class="code-inline !bg-transparent !p-0" style="color: var(--ink)">view html</code> 独立 HTML</span>
+            <span class="chip"><code class="code-inline !bg-transparent !p-0" style="color: var(--ink)">view screenshot</code> 按页 PNG</span>
+            <span class="chip"><code class="code-inline !bg-transparent !p-0" style="color: var(--ink)">watch</code> 实时预览</span>
           </div>
         </div>
         <Term html={termRender} class="text-[12.5px]" />
@@ -492,7 +492,7 @@ const agentPoints = [
                     rel="noopener"
                     class="no-underline hover:text-[var(--accent)] transition-colors"
                   >
-                    <code class="code-inline" style="color: var(--accent)">{cmd.name}</code>
+                    <code class="code-inline" style="color: var(--term-accent)">{cmd.name}</code>
                     <span class="ml-2 text-[13.5px]" style="color: var(--dim)">{cmd.desc}</span>
                   </a>
                 </li>
