@@ -3,6 +3,10 @@ export const site = {
   github: "https://github.com/iOfficeAI/OfficeCLI",
   releases: "https://github.com/iOfficeAI/OfficeCLI/releases",
   official: "https://officecli.ai",
+  /** 本站（中文站）域名根 */
+  officialCN: "https://officecli.ndjp.net/",
+  /** 社交分享卡片图 */
+  ogImage: "https://officecli.ndjp.net/assets/og-image.png",
   discord: "https://discord.gg/2QAwJn7Egx",
   wiki: "https://github.com/iOfficeAI/OfficeCLI/wiki",
   skill: "https://officecli.ai/SKILL.md",
@@ -62,7 +66,7 @@ export const formatFeatures: {
 }[] = [
   {
     format: "Word",
-    icon: "ph-file-doc",
+    icon: "file-doc",
     file: ".docx",
     reference: "word",
     features: [
@@ -85,7 +89,7 @@ export const formatFeatures: {
   },
   {
     format: "Excel",
-    icon: "ph-file-xls",
+    icon: "file-xls",
     file: ".xlsx",
     reference: "excel",
     features: [
@@ -108,7 +112,7 @@ export const formatFeatures: {
   },
   {
     format: "PowerPoint",
-    icon: "ph-file-ppt",
+    icon: "file-ppt",
     file: ".pptx",
     reference: "powerpoint",
     features: [
@@ -131,11 +135,13 @@ export const formatFeatures: {
   },
 ];
 
+// 演示画廊：原 GIF 已用 ffmpeg 转成体积更小的 MP4（H.264）+ 首帧 JPG 海报
+// w/h 为 MP4 实际像素（宽统一 760），供 CSS aspect-ratio 预留版面防布局抖动
 export const showcase = [
-  { src: "/assets/designwhatmovesyou.gif", alt: "AI 智能体生成的设计主题演示文稿", label: "设计提案" },
-  { src: "/assets/word2.gif", alt: "AI 智能体生成的项目建议书 Word 文档", label: "项目建议书" },
-  { src: "/assets/horizon.gif", alt: "AI 智能体生成的商务演示文稿", label: "商务汇报" },
-  { src: "/assets/excel2.gif", alt: "AI 智能体生成的成绩管理电子表格", label: "成绩管理" },
-  { src: "/assets/efforless.gif", alt: "AI 智能体生成的科技风格演示文稿", label: "科技产品" },
-  { src: "/assets/excel3.gif", alt: "AI 智能体生成的销售仪表盘电子表格", label: "销售仪表盘" },
+  { src: "/assets/designwhatmovesyou.mp4", w: 760, h: 428, alt: "AI 智能体生成的设计主题演示文稿", label: "设计提案" },
+  { src: "/assets/word2.mp4", w: 760, h: 432, alt: "AI 智能体生成的项目建议书 Word 文档", label: "项目建议书" },
+  { src: "/assets/horizon.mp4", w: 760, h: 428, alt: "AI 智能体生成的商务演示文稿", label: "商务汇报" },
+  { src: "/assets/excel2.mp4", w: 760, h: 434, alt: "AI 智能体生成的成绩管理电子表格", label: "成绩管理" },
+  { src: "/assets/efforless.mp4", w: 760, h: 426, alt: "AI 智能体生成的科技风格演示文稿", label: "科技产品" },
+  { src: "/assets/excel3.mp4", w: 760, h: 438, alt: "AI 智能体生成的销售仪表盘电子表格", label: "销售仪表盘" },
 ];

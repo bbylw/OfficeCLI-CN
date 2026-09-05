@@ -50,7 +50,30 @@ const check = (name, ok) => {
   await ctx.close();
 }
 
-// 3. 桌面导航单行 + 404 页
+// 3.5 画廊按钮 + 主题切换图标可见性
+{
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const page = await ctx.newPage();
+  await page.goto(base, { waitUntil: "networkidle" });
+  const navShown = await page.evaluate(() => {
+    const ctrl = document.getElementById("showcase-controls");
+    return ctrl && !ctrl.hidden;
+  });
+  check("画廊滚动按钮在溢出时可见", navShown);
+  const before = await page.evaluate(() => document.getElementById("showcase-gallery").scrollLeft);
+  await page.click("#gallery-next");
+  await page.waitForTimeout(900);
+  const after = await page.evaluate(() => document.getElementById("showcase-gallery").scrollLeft);
+  check("下一张按钮可滚动画廊", after > before);
+  const darkIcons = await page.$$eval("#theme-toggle svg", (els) => els.map((e) => getComputedStyle(e).display));
+  check("暗色主题显示月亮图标", darkIcons[0] === "none" && darkIcons[1] !== "none");
+  await page.click("#theme-toggle");
+  const lightIcons = await page.$$eval("#theme-toggle svg", (els) => els.map((e) => getComputedStyle(e).display));
+  check("亮色主题显示太阳图标", lightIcons[0] !== "none" && lightIcons[1] === "none");
+  await ctx.close();
+}
+
+// 4. 桌面导航单行 + 404 页
 {
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   const page = await ctx.newPage();

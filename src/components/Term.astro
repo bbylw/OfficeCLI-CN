@@ -1,8 +1,11 @@
 ---
 // 终端块：内容经 set:html 注入，保留真实换行（Astro 模板字面换行会被折叠）
+import Icon from "./Icon.astro";
+import type { IconName } from "../data/icons";
+
 interface Props {
   bar?: string;
-  icon?: string;
+  icon?: IconName;
   html: string;
   wrap?: boolean;
   class?: string;
@@ -14,7 +17,7 @@ const { bar, icon, html, wrap = false, class: className = "" } = Astro.props;
   {
     bar && (
       <div class="term-bar">
-        {icon && <i class={`ph ${icon}`} aria-hidden="true" />}
+        {icon && <Icon name={icon} />}
         <span>{bar}</span>
       </div>
     )

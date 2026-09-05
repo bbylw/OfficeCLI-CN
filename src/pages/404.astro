@@ -1,8 +1,9 @@
 ---
 import Layout from "../layouts/Base.astro";
+import Icon from "../components/Icon.astro";
 ---
 
-<Layout>
+<Layout title="页面不存在 — OfficeCLI" seoIndex={false}>
   <section class="wrap pt-32 pb-24 text-center">
     <p class="font-mono text-[15px] m-0" style="color: var(--accent)">404</p>
     <h1 class="m-0 mt-4 font-bold tracking-tighter" style="font-size: clamp(32px, 5vw, 52px)">
@@ -19,7 +20,7 @@ import Layout from "../layouts/Base.astro";
         rel="noopener"
         class="btn btn-ghost no-underline"
       >
-        <i class="ph ph-github-logo" aria-hidden="true"></i>
+        <Icon name="github-logo" />
         GitHub
       </a>
     </div>

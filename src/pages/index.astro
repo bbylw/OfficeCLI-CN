@@ -3,6 +3,7 @@ import Layout from "../layouts/Base.astro";
 import Logo from "../components/Logo.astro";
 import HeroTerm from "../components/HeroTerm.astro";
 import Term from "../components/Term.astro";
+import Icon from "../components/Icon.astro";
 import { site, commandGroups, formatFeatures, showcase } from "../data/site";
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
@@ -12,7 +13,8 @@ const F = (s: string) => `<span class="c-flag">${esc(s)}</span>`;
 const S = (s: string) => `<span class="c-str">${esc(s)}</span>`;
 
 const termRender = [
-  P("$ officecli view deck.pptx screenshot -o deck.png"),
+  P("$ officecli view deck.pptx screenshot \\"),
+  `    -o deck.png`,
   O("第 1-8 页已导出，交给多模态模型检查"),
   "",
   P("$ officecli watch deck.pptx"),
@@ -31,8 +33,10 @@ const termMerge = [
 ].join("\n");
 
 const termDump = [
-  P("$ officecli dump existing.docx -o blueprint.json"),
-  P("$ officecli batch new.docx --input blueprint.json"),
+  P("$ officecli dump existing.docx \\"),
+  `    -o blueprint.json`,
+  P("$ officecli batch new.docx \\"),
+  `    --input blueprint.json`,
   O("整个文档序列化为可重放的 batch JSON"),
 ].join("\n");
 
@@ -65,15 +69,18 @@ const termPkg = [
   "scoop install officecli",
   "",
   O("# npm 全平台"),
-  "npm i -g @officecli/officecli",
+  "npm i -g",
+  "  @officecli/officecli",
 ].join("\n");
 
 const termQuick = [
   O("# 30 秒看到效果：创建幻灯片并启动实时预览"),
   P("$ officecli create deck.pptx"),
-  P('$ officecli add deck.pptx / --type slide --prop title="Hello, World!"'),
+  P("$ officecli add deck.pptx / \\"),
+  `    ${F("--type")} slide \\`,
+  `    ${F("--prop")} ${S('title="Hello, World!"')}`,
   P("$ officecli watch deck.pptx"),
-  O("浏览器自动打开 http://localhost:26315"),
+  O("浏览器自动打开 localhost:26315"),
 ].join("\n");
 
 const compareRows = [
@@ -92,22 +99,22 @@ const compareRows = [
 
 const agentPoints = [
   {
-    icon: "ph-brackets-curly",
+    icon: "brackets-curly",
     title: "确定性 JSON 输出",
     desc: "每条命令支持 --json，schema 一致，无需正则解析 stdout。",
   },
   {
-    icon: "ph-tree-structure",
+    icon: "tree-structure",
     title: "稳定路径寻址",
     desc: "每个元素都有稳定路径，智能体不必理解 XML 命名空间。",
   },
   {
-    icon: "ph-stack",
+    icon: "stack",
     title: "渐进式复杂度",
     desc: "从只读视图到 DOM 操作，必要时才降到 raw XML，节省 token。",
   },
   {
-    icon: "ph-arrows-counter-clockwise",
+    icon: "arrows-counter-clockwise",
     title: "自愈式错误恢复",
     desc: "结构化错误码带 suggestion 和有效范围，智能体自行纠错。",
   },
@@ -118,7 +125,7 @@ const agentPoints = [
   <!-- ============ Hero ============ -->
   <section class="wrap pt-16 pb-20 md:pt-24">
     <div class="grid gap-12 lg:grid-cols-[1fr_1.15fr] items-center">
-      <div>
+      <div class="hero-fx">
         <h1 class="m-0 font-bold tracking-tighter" style="font-size: clamp(40px, 6vw, 64px); line-height: 1.05">
           AI 智能体的<br />
           <span style="color: var(--accent)">Office 套件</span>
@@ -128,7 +135,7 @@ const agentPoints = [
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href="#install" class="btn btn-solid no-underline">
-            <i class="ph ph-download" aria-hidden="true"></i>
+            <Icon name="download" />
             安装 OfficeCLI
           </a>
           <a
@@ -137,7 +144,7 @@ const agentPoints = [
             rel="noopener"
             class="btn btn-ghost no-underline"
           >
-            <i class="ph ph-github-logo" aria-hidden="true"></i>
+            <Icon name="github-logo" />
             GitHub
           </a>
         </div>
@@ -157,26 +164,26 @@ const agentPoints = [
       <table class="matrix">
         <thead>
           <tr>
-            <th>格式</th>
-            <th><i class="ph ph-eye" aria-hidden="true"></i> 读取</th>
-            <th><i class="ph ph-wrench" aria-hidden="true"></i> 修改</th>
-            <th><i class="ph ph-circles-three" aria-hidden="true"></i> 创建</th>
+            <th scope="col">格式</th>
+            <th scope="col"><Icon name="eye" /> 读取</th>
+            <th scope="col"><Icon name="wrench" /> 修改</th>
+            <th scope="col"><Icon name="circles-three" /> 创建</th>
           </tr>
         </thead>
         <tbody>
           {
             formatFeatures.map((f) => (
               <tr>
-                <td>
+                <th scope="row">
                   <span class="inline-flex items-center gap-2.5 font-semibold">
-                    <i class={`ph ${f.icon} text-[20px]`} style="color: var(--accent)" aria-hidden="true" />
+                    <Icon name={f.icon} class="text-[20px]" style="color: var(--accent)" />
                     {f.format}
                     <code class="code-inline">{f.file}</code>
                   </span>
-                </td>
-                <td><i class="ph ph-check text-[18px]" style="color: var(--accent)" aria-hidden="true" /></td>
-                <td><i class="ph ph-check text-[18px]" style="color: var(--accent)" aria-hidden="true" /></td>
-                <td><i class="ph ph-check text-[18px]" style="color: var(--accent)" aria-hidden="true" /></td>
+                </th>
+                <td><Icon name="check" class="text-[18px]" style="color: var(--accent)" /></td>
+                <td><Icon name="check" class="text-[18px]" style="color: var(--accent)" /></td>
+                <td><Icon name="check" class="text-[18px]" style="color: var(--accent)" /></td>
               </tr>
             ))
           }
@@ -189,7 +196,7 @@ const agentPoints = [
         formatFeatures.map((f) => (
           <div>
             <h3 class="m-0 text-[14px] font-semibold flex items-center gap-2">
-              <i class={`ph ${f.icon}`} style="color: var(--accent)" aria-hidden="true" />
+              <Icon name={f.icon} style="color: var(--accent)" />
               {f.format}
               <a
                 href={site.wikiFormat(f.reference)}
@@ -223,15 +230,46 @@ const agentPoints = [
 
   <!-- ============ 演示画廊 ============ -->
   <section class="wrap pt-24" id="showcase">
-    <h2 class="sec-title">全部由 AI 智能体自动生成</h2>
-    <p class="sec-sub">
-      以下文档由智能体使用 OfficeCLI 全自动创建，无模板、无人工编辑。左右滑动查看更多。
-    </p>
-    <div class="gallery mt-10">
+    <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+      <div>
+        <h2 class="sec-title m-0">全部由 AI 智能体自动生成</h2>
+        <p class="sec-sub">
+          以下文档由智能体使用 OfficeCLI 全自动创建，无模板、无人工编辑。左右滑动查看更多。
+        </p>
+      </div>
+      <div class="flex items-center gap-2" id="showcase-controls" hidden>
+        <button type="button" id="gallery-prev" class="nav-btn" aria-label="上一张演示">
+          <Icon name="arrow-right" class="rotate-180" />
+        </button>
+        <button type="button" id="gallery-next" class="nav-btn" aria-label="下一张演示">
+          <Icon name="arrow-right" />
+        </button>
+      </div>
+    </div>
+    <div
+      class="gallery mt-10"
+      id="showcase-gallery"
+      tabindex="0"
+      role="region"
+      aria-label="演示画廊：方向键可左右翻阅"
+    >
       {
         showcase.map((s) => (
           <figure class="panel m-0 overflow-hidden w-[300px] md:w-[380px]">
-            <img src={s.src} alt={s.alt} loading="lazy" class="block w-full" />
+            <video
+              data-src={s.src}
+              poster={`/assets/${s.src.split("/").pop()?.replace(/\.mp4$/, "-poster.jpg")}`}
+              width={s.w}
+              height={s.h}
+              muted
+              playsinline
+              loop
+              preload="none"
+              role="img"
+              aria-label={s.alt}
+              class="block w-full h-auto"
+              style={`aspect-ratio: ${s.w} / ${s.h}`}
+            ></video>
             <figcaption class="px-4 py-3 text-[13px] font-mono" style="border-top: 1px solid var(--line); color: var(--dim)">
               {s.label}
             </figcaption>
@@ -246,12 +284,12 @@ const agentPoints = [
     <h2 class="sec-title">四个内置引擎</h2>
     <p class="sec-sub">自包含，无需 Office。渲染、求值、合并、往返，全在二进制里完成。</p>
 
-    <div class="mt-10 grid gap-5 md:grid-cols-2">
+    <div class="mt-10 grid gap-5 lg:grid-cols-2">
       <!-- 渲染引擎：大格 -->
-      <div class="panel md:col-span-2 p-7 grid gap-7 lg:grid-cols-[1fr_1.1fr] items-center">
+      <div class="panel lg:col-span-2 p-7 grid gap-7 lg:grid-cols-[1fr_1.1fr] items-center">
         <div>
           <h3 class="m-0 text-[20px] font-bold flex items-center gap-2.5">
-            <i class="ph ph-eye text-[24px]" style="color: var(--accent)" aria-hidden="true"></i>
+            <Icon name="eye" class="text-[24px]" style="color: var(--accent)" />
             高保真渲染引擎
           </h3>
           <p class="mt-3.5 text-[15px] leading-relaxed" style="color: var(--dim)">
@@ -269,7 +307,7 @@ const agentPoints = [
       <!-- 公式与透视 -->
       <div class="panel p-7" style="background: color-mix(in srgb, var(--accent) 5%, var(--panel))">
         <h3 class="m-0 text-[20px] font-bold flex items-center gap-2.5">
-          <i class="ph ph-table text-[24px]" style="color: var(--accent)" aria-hidden="true"></i>
+          <Icon name="table" class="text-[24px]" style="color: var(--accent)" />
           公式与透视引擎
         </h3>
         <p class="mt-3.5 text-[15px] leading-relaxed" style="color: var(--dim)">
@@ -281,7 +319,7 @@ const agentPoints = [
       <!-- 模板合并 -->
       <div class="panel p-7">
         <h3 class="m-0 text-[20px] font-bold flex items-center gap-2.5">
-          <i class="ph ph-brackets-curly text-[24px]" style="color: var(--accent)" aria-hidden="true"></i>
+          <Icon name="brackets-curly" class="text-[24px]" style="color: var(--accent)" />
           模板合并
         </h3>
         <p class="mt-3.5 text-[15px] leading-relaxed" style="color: var(--dim)">
@@ -291,11 +329,11 @@ const agentPoints = [
       </div>
 
       <!-- Dump 往返 -->
-      <div class="panel md:col-span-2 p-7 grid gap-7 lg:grid-cols-[1.1fr_1fr] items-center">
+      <div class="panel lg:col-span-2 p-7 grid gap-7 lg:grid-cols-[1.1fr_1fr] items-center">
         <Term html={termDump} class="text-[12.5px] order-2 lg:order-1" />
         <div class="order-1 lg:order-2">
           <h3 class="m-0 text-[20px] font-bold flex items-center gap-2.5">
-            <i class="ph ph-arrows-counter-clockwise text-[24px]" style="color: var(--accent)" aria-hidden="true"></i>
+            <Icon name="arrows-counter-clockwise" class="text-[24px]" style="color: var(--accent)" />
             Dump 往返
           </h3>
           <p class="mt-3.5 text-[15px] leading-relaxed" style="color: var(--dim)">
@@ -353,7 +391,7 @@ const agentPoints = [
           agentPoints.map((p) => (
             <div>
               <h3 class="m-0 text-[15.5px] font-bold flex items-center gap-2">
-                <i class={`ph ${p.icon} text-[20px]`} style="color: var(--accent)" aria-hidden="true" />
+                <Icon name={p.icon} class="text-[20px]" style="color: var(--accent)" />
                 {p.title}
               </h3>
               <p class="mt-2 m-0 text-[14px] leading-relaxed" style="color: var(--dim)">{p.desc}</p>
@@ -361,16 +399,16 @@ const agentPoints = [
           ))
         }
       </div>
-      <Term bar="接入示例" icon="ph-robot" html={termAgents} class="text-[12.5px]" />
+      <Term bar="接入示例" icon="robot" html={termAgents} class="text-[12.5px]" />
     </div>
 
     <div class="mt-10 flex flex-wrap gap-2.5">
-      <span class="chip"><i class="ph ph-database" aria-hidden="true"></i> 数据库报告自动生成</span>
-      <span class="chip"><i class="ph ph-arrows-left-right" aria-hidden="true"></i> 批量查找替换与样式更新</span>
-      <span class="chip"><i class="ph ph-rocket-launch" aria-hidden="true"></i> CI/CD 文档流水线</span>
-      <span class="chip"><i class="ph ph-cursor-click" aria-hidden="true"></i> Docker 无头自动化</span>
-      <span class="chip"><i class="ph ph-list-checks" aria-hidden="true"></i> 交付前质量校验</span>
-      <span class="chip"><i class="ph ph-binoculars" aria-hidden="true"></i> 文档提取结构化 JSON</span>
+      <span class="chip"><Icon name="database" /> 数据库报告自动生成</span>
+      <span class="chip"><Icon name="arrows-left-right" /> 批量查找替换与样式更新</span>
+      <span class="chip"><Icon name="rocket-launch" /> CI/CD 文档流水线</span>
+      <span class="chip"><Icon name="cursor-click" /> Docker 无头自动化</span>
+      <span class="chip"><Icon name="list-checks" /> 交付前质量校验</span>
+      <span class="chip"><Icon name="binoculars" /> 文档提取结构化 JSON</span>
     </div>
   </section>
 
@@ -383,21 +421,21 @@ const agentPoints = [
       <table class="matrix">
         <thead>
           <tr>
-            <th></th>
-            <th style="color: var(--accent); font-weight: 700">OfficeCLI</th>
-            <th>Microsoft Office</th>
-            <th>LibreOffice</th>
-            <th>python-docx 系</th>
+            <th scope="col"></th>
+            <th scope="col" style="color: var(--accent); font-weight: 700">OfficeCLI</th>
+            <th scope="col">Microsoft Office</th>
+            <th scope="col">LibreOffice</th>
+            <th scope="col">python-docx 系</th>
           </tr>
         </thead>
         <tbody>
           {
             compareRows.map((row) => (
               <tr>
-                <td class="font-medium">{row[0]}</td>
+                <th scope="row" class="font-medium">{row[0]}</th>
                 <td style="background: color-mix(in srgb, var(--accent) 6%, transparent)">
                   {row[1] === true ? (
-                    <i class="ph ph-check text-[18px]" style="color: var(--accent)" aria-hidden="true" />
+                    <Icon name="check" class="text-[18px]" style="color: var(--accent)" />
                   ) : (
                     <span class="font-medium" style="color: var(--accent)">{row[1]}</span>
                   )}
@@ -405,9 +443,9 @@ const agentPoints = [
                 {row.slice(2).map((cell) => (
                   <td style="color: var(--dim)">
                     {cell === true ? (
-                      <i class="ph ph-check text-[18px]" style="color: var(--dim)" aria-hidden="true" />
+                      <Icon name="check" class="text-[18px]" style="color: var(--dim)" />
                     ) : cell === false ? (
-                      <i class="ph ph-x text-[18px] opacity-60" aria-hidden="true" />
+                      <Icon name="x" class="text-[18px] opacity-60" />
                     ) : (
                       cell
                     )}
@@ -431,7 +469,7 @@ const agentPoints = [
     <div class="mt-10 grid gap-5 md:grid-cols-3">
       <div class="panel p-6">
         <h3 class="m-0 text-[15.5px] font-bold flex items-center gap-2">
-          <i class="ph ph-download text-[20px]" style="color: var(--accent)" aria-hidden="true"></i>
+          <Icon name="download" class="text-[20px]" style="color: var(--accent)" />
           一键脚本
         </h3>
         <Term bar="脚本" html={termInstallScript} wrap class="text-[11.5px] mt-4" />
@@ -439,15 +477,15 @@ const agentPoints = [
 
       <div class="panel p-6">
         <h3 class="m-0 text-[15.5px] font-bold flex items-center gap-2">
-          <i class="ph ph-package text-[20px]" style="color: var(--accent)" aria-hidden="true"></i>
+          <Icon name="package" class="text-[20px]" style="color: var(--accent)" />
           包管理器
         </h3>
-        <Term bar="包管理器" icon="ph-package" html={termPkg} class="text-[12px] mt-4" />
+        <Term bar="包管理器" icon="package" html={termPkg} class="text-[12px] mt-4" />
       </div>
 
       <div class="panel p-6">
         <h3 class="m-0 text-[15.5px] font-bold flex items-center gap-2">
-          <i class="ph ph-magnifying-glass text-[20px]" style="color: var(--accent)" aria-hidden="true"></i>
+          <Icon name="magnifying-glass" class="text-[20px]" style="color: var(--accent)" />
           手动下载
         </h3>
         <p class="mt-3 text-[14px] leading-relaxed" style="color: var(--dim)">
@@ -463,12 +501,12 @@ const agentPoints = [
         </ul>
         <a href={site.releases} target="_blank" rel="noopener" class="btn btn-ghost mt-5 no-underline !py-2.5 !px-4 !text-[14px]">
           GitHub Releases
-          <i class="ph ph-arrow-right" aria-hidden="true"></i>
+          <Icon name="arrow-right" />
         </a>
       </div>
     </div>
 
-    <Term bar="快速上手" icon="ph-terminal-window" html={termQuick} class="mt-5 text-[12.5px]" />
+    <Term bar="快速上手" icon="terminal-window" html={termQuick} class="mt-5 text-[12.5px]" />
   </section>
 
   <!-- ============ 命令参考 ============ -->
@@ -511,7 +549,7 @@ const agentPoints = [
       <p class="sec-sub mx-auto mt-4">帮助更多人发现 OfficeCLI。Bug 与贡献欢迎提交 GitHub Issues。</p>
       <div class="mt-8 flex flex-wrap justify-center gap-3">
         <a href={site.github} target="_blank" rel="noopener" class="btn btn-solid no-underline">
-          <i class="ph ph-github-logo" aria-hidden="true"></i>
+          <Icon name="github-logo" />
           给 OfficeCLI 点 Star
         </a>
         <a href={site.wiki} target="_blank" rel="noopener" class="btn btn-ghost no-underline">
@@ -520,4 +558,57 @@ const agentPoints = [
       </div>
     </div>
   </section>
+
+  <script>
+    // 演示画廊：上一张/下一张按钮（横向溢出时显示）+ 方向键翻阅
+    const gallery = document.getElementById("showcase-gallery");
+    const ctrl = document.getElementById("showcase-controls");
+    const prevBtn = document.getElementById("gallery-prev");
+    const nextBtn = document.getElementById("gallery-next");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (gallery && ctrl && prevBtn && nextBtn) {
+      const step = () => {
+        const first = gallery.querySelector<HTMLElement>("figure");
+        return (first?.getBoundingClientRect().width ?? 380) + 20;
+      };
+      const scrollBy = (left: number) =>
+        gallery.scrollBy({ left, behavior: reducedMotion ? "auto" : "smooth" });
+
+      const updateNav = () => {
+        ctrl.hidden = gallery.scrollWidth <= gallery.clientWidth + 4;
+      };
+      prevBtn.addEventListener("click", () => scrollBy(-step()));
+      nextBtn.addEventListener("click", () => scrollBy(step()));
+      gallery.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+          e.preventDefault();
+          scrollBy(e.key === "ArrowRight" ? step() : -step());
+        }
+      });
+      gallery.addEventListener("scroll", updateNav, { passive: true });
+      window.addEventListener("resize", updateNav);
+      updateNav();
+    }
+
+    // 视频懒加载：进入视口才设置 src 并自动播放；reduced-motion 下保持静态海报
+    if (!reducedMotion && "IntersectionObserver" in window) {
+      const vids = Array.from(document.querySelectorAll<HTMLVideoElement>("video[data-src]"));
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            const v = entry.target as HTMLVideoElement;
+            if (entry.isIntersecting) {
+              if (!v.src) v.src = v.dataset.src || "";
+              v.play().catch(() => {});
+            } else {
+              v.pause();
+            }
+          }
+        },
+        { rootMargin: "240px 0px" }
+      );
+      vids.forEach((v) => io.observe(v));
+    }
+  </script>
 </Layout>

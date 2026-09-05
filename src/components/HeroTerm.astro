@@ -1,29 +1,31 @@
 ---
 // Hero 双联：真实命令的终端 + 命令产出的幻灯片实时预览
 import Term from "./Term.astro";
+import Icon from "./Icon.astro";
 
 const term = [
   `<span class="c-prompt">$</span> officecli create deck.pptx`,
   `<span class="c-out">已创建 deck.pptx</span>`,
   ``,
-  `<span class="c-prompt">$</span> officecli add deck.pptx / --type slide \\`,
+  `<span class="c-prompt">$</span> officecli add deck.pptx / \\`,
+  `    <span class="c-flag">--type</span> slide \\`,
   `    <span class="c-flag">--prop</span> <span class="c-str">title="Q4 Report"</span> \\`,
   `    <span class="c-flag">--prop</span> <span class="c-str">background=1A1A2E</span>`,
   ``,
   `<span class="c-prompt">$</span> officecli watch deck.pptx`,
-  `<span class="c-out">预览运行中: http://localhost:26315</span>`,
+  `<span class="c-out">预览运行中: localhost:26315</span>`,
 ].join("\n");
 ---
 
-<div class="grid gap-4 lg:grid-cols-[1.25fr_1fr] items-stretch">
-  <Term bar="bash" icon="ph-terminal-window" html={term} class="text-[12.5px] md:text-[13.5px]" />
+<div class="hero-fx grid gap-4 lg:grid-cols-[1.25fr_1fr] items-stretch">
+  <Term bar="bash" icon="terminal-window" html={term} class="text-[12.5px] md:text-[13.5px]" />
 
   <figure class="panel m-0 flex flex-col overflow-hidden">
     <div
       class="flex items-center gap-2 px-4 py-2.5 text-[12px] font-mono"
       style="border-bottom: 1px solid var(--line); color: var(--dim)"
     >
-      <i class="ph ph-eye" aria-hidden="true"></i>
+      <Icon name="eye" />
       <span>localhost:26315</span>
     </div>
     <div class="flex-1 grid place-items-center p-5" style="background: var(--raised)">

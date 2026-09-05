@@ -1,0 +1,30 @@
+---
+// 内联 Phosphor 图标（regular 风格）。用 currentColor 继承文字颜色，
+// 尺寸默认 1em，跟随所在元素的 font-size。
+import { icons, type IconName } from "../data/icons";
+
+interface Props {
+  name: IconName;
+  class?: string;
+  style?: string;
+  size?: string;
+  label?: string;
+}
+
+const { name, class: className, style, size = "1em", label } = Astro.props;
+---
+
+<svg
+  viewBox="0 0 256 256"
+  width={size}
+  height={size}
+  fill="currentColor"
+  class:list={["icon", className]}
+  style={style}
+  focusable="false"
+  role={label ? "img" : undefined}
+  aria-hidden={label ? undefined : "true"}
+  aria-label={label}
+>
+  <path d={icons[name]} />
+</svg>

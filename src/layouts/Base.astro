@@ -1,20 +1,46 @@
 ---
-import "@fontsource-variable/space-grotesk";
-import "@fontsource-variable/jetbrains-mono";
-import "@phosphor-icons/web/regular";
 import "../styles/global.css";
 import Logo from "../components/Logo.astro";
+import Icon from "../components/Icon.astro";
+import { site } from "../data/site";
+// 只引入拉丁子集的字体文件，去掉用不到的 latin-ext / 西里尔 / 希腊 / 越南文等
+import spaceGroteskLatin from "@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url";
+import jetbrainsMonoLatin from "@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url";
 
 interface Props {
   title?: string;
   description?: string;
+  /** 是否允许被搜索引擎收录（404 页关闭） */
+  seoIndex?: boolean;
 }
 
 const {
-  title = "OfficeCLI",
+  title = "OfficeCLI — 专为 AI 智能体设计的 Office 套件",
   description =
     "开源免费的 Office 套件 CLI，专为 AI 智能体设计。单一可执行文件，零依赖，一行命令创建、读取、修改 Word、Excel、PowerPoint。",
+  seoIndex = true,
 } = Astro.props;
+
+const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
+const isRoot = Astro.url.pathname === "/" || Astro.url.pathname === "/index.html";
+
+const fontFaces = `
+@font-face{font-family:'Space Grotesk Variable';font-style:normal;font-display:swap;font-weight:300 700;src:url("${spaceGroteskLatin}") format('woff2-variations');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+@font-face{font-family:'JetBrains Mono Variable';font-style:normal;font-display:swap;font-weight:100 800;src:url("${jetbrainsMonoLatin}") format('woff2-variations');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}`;
+
+const ldJson = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "OfficeCLI",
+  alternateName: "officecli",
+  url: site.officialCN,
+  description,
+  applicationCategory: "DeveloperApplication",
+  operatingSystem: "macOS, Windows, Linux",
+  license: "https://github.com/iOfficeAI/OfficeCLI/blob/main/LICENSE",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  sameAs: [site.github, site.official, site.discord],
+};
 ---
 
 <!doctype html>
@@ -24,22 +50,46 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap.xml" />
     <meta name="generator" content={Astro.generator} />
+    {seoIndex && (
+      <>
+        <link rel="canonical" href={pageUrl} />
+        <meta property="og:site_name" content="OfficeCLI" />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="zh_CN" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={isRoot ? site.officialCN : pageUrl} />
+        <meta property="og:image" content={site.ogImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="OfficeCLI 中文站首屏：AI 智能体的 Office 套件" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={site.ogImage} />
+        <script type="application/ld+json" set:html={JSON.stringify(ldJson)} />
+      </>
+    )}
+    {!seoIndex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#0a0f0c" />
+    <Fragment set:html={`<style>${fontFaces}</style>`} />
     <script is:inline>
       (function () {
         try {
           var t = localStorage.getItem("officecli-theme");
-          document.documentElement.dataset.theme = t === "light" ? "light" : "dark";
+          var theme = t === "light" ? "light" : "dark";
+          document.documentElement.dataset.theme = theme;
+          var mc = document.querySelector('meta[name="theme-color"]');
+          if (mc) mc.content = theme === "light" ? "#f2f5f1" : "#0a0f0c";
         } catch (e) {}
       })();
     </script>
   </head>
   <body>
+    <a href="#main" class="skip-link">跳到主要内容</a>
     <header
       class="sticky top-0 z-40 border-b"
       style="border-color: var(--line); background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(12px);"
@@ -62,9 +112,10 @@ const {
             class="btn-ghost !p-2.5 grid place-items-center cursor-pointer"
             style="border-radius: var(--radius-ctl); border: 1px solid var(--line); background: transparent;"
             aria-label="切换明暗主题"
+            aria-pressed="false"
           >
-            <i class="ph ph-sun hidden dark-hidden text-[17px]" style="color: var(--ink)"></i>
-            <i class="ph ph-moon light-hidden text-[17px]" style="color: var(--ink)"></i>
+            <Icon name="sun" class="dark-hidden text-[17px]" style="color: var(--ink)" />
+            <Icon name="moon" class="light-hidden text-[17px]" style="color: var(--ink)" />
           </button>
           <a
             href="https://github.com/iOfficeAI/OfficeCLI"
@@ -74,13 +125,13 @@ const {
             style="border-radius: var(--radius-ctl); border: 1px solid var(--line);"
             aria-label="GitHub 仓库"
           >
-            <i class="ph ph-github-logo text-[17px]" style="color: var(--ink)"></i>
+            <Icon name="github-logo" class="text-[17px]" style="color: var(--ink)" />
           </a>
         </div>
       </div>
     </header>
 
-    <main>
+    <main id="main">
       <slot />
     </main>
 
@@ -124,10 +175,13 @@ const {
 
     <script>
       const btn = document.getElementById("theme-toggle");
+      const metaTheme = document.querySelector('meta[name="theme-color"]');
       btn?.addEventListener("click", () => {
         const root = document.documentElement;
         const next = root.dataset.theme === "dark" ? "light" : "dark";
         root.dataset.theme = next;
+        btn.setAttribute("aria-pressed", String(next === "light"));
+        if (metaTheme) metaTheme.content = next === "light" ? "#f2f5f1" : "#0a0f0c";
         try {
           localStorage.setItem("officecli-theme", next);
         } catch (e) {}
