@@ -1,0 +1,47 @@
+---
+// Hero 双联：真实命令的终端 + 命令产出的幻灯片实时预览
+import Term from "./Term.astro";
+
+const term = [
+  `<span class="c-prompt">$</span> officecli create deck.pptx`,
+  `<span class="c-out">已创建 deck.pptx</span>`,
+  ``,
+  `<span class="c-prompt">$</span> officecli add deck.pptx / --type slide \\`,
+  `    <span class="c-flag">--prop</span> <span class="c-str">title="Q4 Report"</span> \\`,
+  `    <span class="c-flag">--prop</span> <span class="c-str">background=1A1A2E</span>`,
+  ``,
+  `<span class="c-prompt">$</span> officecli watch deck.pptx`,
+  `<span class="c-out">预览运行中: http://localhost:26315</span>`,
+].join("\n");
+---
+
+<div class="grid gap-4 lg:grid-cols-[1.25fr_1fr] items-stretch">
+  <Term bar="bash" icon="ph-terminal-window" html={term} class="text-[12.5px] md:text-[13.5px]" />
+
+  <figure class="panel m-0 flex flex-col overflow-hidden">
+    <div
+      class="flex items-center gap-2 px-4 py-2.5 text-[12px] font-mono"
+      style="border-bottom: 1px solid var(--line); color: var(--dim)"
+    >
+      <i class="ph ph-eye" aria-hidden="true"></i>
+      <span>localhost:26315</span>
+    </div>
+    <div class="flex-1 grid place-items-center p-5" style="background: var(--raised)">
+      <!-- 幻灯片真实还原：命令里写的背景色、标题、文本框 -->
+      <div
+        class="w-full max-w-[300px] aspect-[16/9] rounded-lg p-5 flex flex-col justify-center gap-2 shadow-lg"
+        style="background: #1a1a2e"
+        role="img"
+        aria-label="命令生成的幻灯片预览：标题 Q4 Report，文本框内容 Revenue grew 25%"
+      >
+        <p class="m-0 font-semibold text-white text-[17px] tracking-tight">Q4 Report</p>
+        <div class="rounded px-3 py-1.5 inline-block w-fit" style="background: rgb(255 255 255 / 0.08)">
+          <p class="m-0 text-[11.5px] font-mono" style="color: #45e08c">Revenue grew 25%</p>
+        </div>
+      </div>
+    </div>
+    <figcaption class="px-4 py-2.5 text-[12px]" style="border-top: 1px solid var(--line); color: var(--dim)">
+      watch 模式下每次 add、set、remove 都即时刷新
+    </figcaption>
+  </figure>
+</div>

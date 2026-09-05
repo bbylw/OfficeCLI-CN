@@ -1,0 +1,137 @@
+---
+import "@fontsource-variable/space-grotesk";
+import "@fontsource-variable/jetbrains-mono";
+import "@phosphor-icons/web/regular";
+import "../styles/global.css";
+import Logo from "../components/Logo.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "OfficeCLI",
+  description =
+    "开源免费的 Office 套件 CLI，专为 AI 智能体设计。单一可执行文件，零依赖，一行命令创建、读取、修改 Word、Excel、PowerPoint。",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap.xml" />
+    <meta name="generator" content={Astro.generator} />
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem("officecli-theme");
+          document.documentElement.dataset.theme = t === "light" ? "light" : "dark";
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <header
+      class="sticky top-0 z-40 border-b"
+      style="border-color: var(--line); background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(12px);"
+    >
+      <div class="wrap flex h-16 items-center justify-between gap-4">
+        <a href="/" class="flex items-center gap-2.5 no-underline" aria-label="OfficeCLI 首页">
+          <Logo />
+          <span class="font-bold text-[17px] tracking-tight" style="color: var(--ink)">OfficeCLI</span>
+        </a>
+        <nav class="hidden md:flex items-center gap-7 text-[14.5px]" aria-label="主导航" style="color: var(--dim)">
+          <a href="#showcase" class="no-underline hover:text-[var(--accent)] transition-colors">演示</a>
+          <a href="#engine" class="no-underline hover:text-[var(--accent)] transition-colors">引擎</a>
+          <a href="#compare" class="no-underline hover:text-[var(--accent)] transition-colors">对比</a>
+          <a href="#commands" class="no-underline hover:text-[var(--accent)] transition-colors">命令</a>
+          <a href="#install" class="no-underline hover:text-[var(--accent)] transition-colors">安装</a>
+        </nav>
+        <div class="flex items-center gap-2">
+          <button
+            id="theme-toggle"
+            class="btn-ghost !p-2.5 grid place-items-center cursor-pointer"
+            style="border-radius: var(--radius-ctl); border: 1px solid var(--line); background: transparent;"
+            aria-label="切换明暗主题"
+          >
+            <i class="ph ph-sun hidden dark-hidden text-[17px]" style="color: var(--ink)"></i>
+            <i class="ph ph-moon light-hidden text-[17px]" style="color: var(--ink)"></i>
+          </button>
+          <a
+            href="https://github.com/iOfficeAI/OfficeCLI"
+            target="_blank"
+            rel="noopener"
+            class="btn-ghost !p-2.5 grid place-items-center no-underline"
+            style="border-radius: var(--radius-ctl); border: 1px solid var(--line);"
+            aria-label="GitHub 仓库"
+          >
+            <i class="ph ph-github-logo text-[17px]" style="color: var(--ink)"></i>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="hairline mt-24">
+      <div class="wrap py-14">
+        <div class="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
+          <div>
+            <div class="flex items-center gap-2.5">
+              <Logo />
+              <span class="font-bold text-[16px]" style="color: var(--ink)">OfficeCLI</span>
+            </div>
+            <p class="mt-4 text-[14px] leading-relaxed max-w-[42ch]" style="color: var(--dim)">
+              专为 AI 智能体设计的 Office 套件。Apache 2.0 开源，由 iOfficeAI 开发与维护。
+            </p>
+          </div>
+          <nav aria-label="资源链接">
+            <h3 class="text-[13px] font-semibold mb-4" style="color: var(--ink)">资源</h3>
+            <ul class="space-y-2.5 text-[14px] list-none p-0 m-0" style="color: var(--dim)">
+              <li><a class="no-underline hover:text-[var(--accent)] transition-colors" href="https://officecli.ai" target="_blank" rel="noopener">官方网站</a></li>
+              <li><a class="no-underline hover:text-[var(--accent)] transition-colors" href="https://github.com/iOfficeAI/OfficeCLI" target="_blank" rel="noopener">GitHub</a></li>
+              <li><a class="no-underline hover:text-[var(--accent)] transition-colors" href="https://github.com/iOfficeAI/OfficeCLI/wiki" target="_blank" rel="noopener">Wiki 文档</a></li>
+              <li><a class="no-underline hover:text-[var(--accent)] transition-colors" href="https://discord.gg/2QAwJn7Egx" target="_blank" rel="noopener">Discord 社区</a></li>
+            </ul>
+          </nav>
+          <nav aria-label="格式参考">
+            <h3 class="text-[13px] font-semibold mb-4" style="color: var(--ink)">格式参考</h3>
+            <ul class="space-y-2.5 text-[14px] list-none p-0 m-0" style="color: var(--dim)">
+              <li><a class="no-underline hover:text-[var(--accent)] transition-colors" href="https://github.com/iOfficeAI/OfficeCLI/wiki/word-reference" target="_blank" rel="noopener">Word 参考</a></li>
+              <li><a class="no-underline hover:text-[var(--accent)] transition-colors" href="https://github.com/iOfficeAI/OfficeCLI/wiki/excel-reference" target="_blank" rel="noopener">Excel 参考</a></li>
+              <li><a class="no-underline hover:text-[var(--accent)] transition-colors" href="https://github.com/iOfficeAI/OfficeCLI/wiki/powerpoint-reference" target="_blank" rel="noopener">PowerPoint 参考</a></li>
+              <li><a class="no-underline hover:text-[var(--accent)] transition-colors" href="https://officecli.ai/SKILL.md" target="_blank" rel="noopener">SKILL.md</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div class="mt-12 pt-6 text-[13px] flex flex-wrap items-center justify-between gap-3" style="border-top: 1px solid var(--line); color: var(--dim)">
+          <p class="m-0">Apache License 2.0 开源</p>
+          <p class="m-0">本页是 OfficeCLI 的中文介绍站，命令与文档以官方仓库为准</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      const btn = document.getElementById("theme-toggle");
+      btn?.addEventListener("click", () => {
+        const root = document.documentElement;
+        const next = root.dataset.theme === "dark" ? "light" : "dark";
+        root.dataset.theme = next;
+        try {
+          localStorage.setItem("officecli-theme", next);
+        } catch (e) {}
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+---
+// 终端块：内容经 set:html 注入，保留真实换行（Astro 模板字面换行会被折叠）
+interface Props {
+  bar?: string;
+  icon?: string;
+  html: string;
+  wrap?: boolean;
+  class?: string;
+}
+const { bar, icon, html, wrap = false, class: className = "" } = Astro.props;
+---
+
+<div class:list={["term", className]}>
+  {
+    bar && (
+      <div class="term-bar">
+        {icon && <i class={`ph ${icon}`} aria-hidden="true" />}
+        <span>{bar}</span>
+      </div>
+    )
+  }
+  <div class="term-body" style={wrap ? "white-space: pre-wrap; overflow-wrap: anywhere" : undefined}>
+    <Fragment set:html={html} />
+  </div>
+</div>

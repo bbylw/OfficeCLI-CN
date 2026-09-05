@@ -1,0 +1,523 @@
+---
+import Layout from "../layouts/Base.astro";
+import Logo from "../components/Logo.astro";
+import HeroTerm from "../components/HeroTerm.astro";
+import Term from "../components/Term.astro";
+import { site, commandGroups, formatFeatures, showcase } from "../data/site";
+
+const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+const P = (s: string) => `<span class="c-prompt">${esc(s)}</span>`;
+const O = (s: string) => `<span class="c-out">${esc(s)}</span>`;
+const F = (s: string) => `<span class="c-flag">${esc(s)}</span>`;
+const S = (s: string) => `<span class="c-str">${esc(s)}</span>`;
+
+const termRender = [
+  P("$ officecli view deck.pptx screenshot -o deck.png"),
+  O("第 1-8 页已导出，交给多模态模型检查"),
+  "",
+  P("$ officecli watch deck.pptx"),
+  O("浏览器自动打开，改动即时刷新"),
+].join("\n");
+
+const termPivot = [
+  P("$ officecli add sales.xlsx '/Sheet1' --type pivottable \\"),
+  `    ${F("--prop")} ${S("values='Revenue:sum'")} \\`,
+  `    ${F("--prop")} ${S("showDataAs=percentOfTotal")}`,
+].join("\n");
+
+const termMerge = [
+  P("$ officecli merge invoice.docx out-001.docx \\"),
+  `    ${F("--data")} ${S(`'{"client":"Acme"}'`)}`,
+].join("\n");
+
+const termDump = [
+  P("$ officecli dump existing.docx -o blueprint.json"),
+  P("$ officecli batch new.docx --input blueprint.json"),
+  O("整个文档序列化为可重放的 batch JSON"),
+].join("\n");
+
+const termAgents = [
+  O("# 注册 MCP 服务器"),
+  P("$ officecli mcp claude"),
+  O("已注册到 Claude Code"),
+  "",
+  O("# 或者：让智能体自己读技能文件"),
+  P("$ curl -fsSL https://officecli.ai/SKILL.md"),
+  "",
+  O("# 场景：生成演示文稿"),
+  P("$ officecli add deck.pptx / --type slide \\"),
+  `    ${F("--prop")} ${S('title="Q4 报告"')}`,
+].join("\n");
+
+const termInstallScript = [
+  O("# macOS / Linux"),
+  "curl -fsSL https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/main/install.sh | bash",
+  "",
+  O("# Windows PowerShell"),
+  "irm https://raw.githubusercontent.com/iOfficeAI/OfficeCLI/main/install.ps1 | iex",
+].join("\n");
+
+const termPkg = [
+  O("# Homebrew"),
+  "brew install officecli",
+  "",
+  O("# Scoop"),
+  "scoop install officecli",
+  "",
+  O("# npm 全平台"),
+  "npm i -g @officecli/officecli",
+].join("\n");
+
+const termQuick = [
+  O("# 30 秒看到效果：创建幻灯片并启动实时预览"),
+  P("$ officecli create deck.pptx"),
+  P('$ officecli add deck.pptx / --type slide --prop title="Hello, World!"'),
+  P("$ officecli watch deck.pptx"),
+  O("浏览器自动打开 http://localhost:26315"),
+].join("\n");
+
+const compareRows = [
+  ["开源免费", "Apache 2.0", "付费授权", "开源", "开源"],
+  ["AI 原生 CLI + JSON 输出", true, false, false, false],
+  ["零安装，单一可执行文件", true, false, false, false],
+  ["任意语言调用", "CLI", "COM/Add-in", "UNO API", "仅 Python"],
+  ["基于路径的元素访问", true, false, false, false],
+  ["内置渲染引擎，HTML/PNG 输出", true, false, "部分支持", false],
+  ["跨格式模板合并", true, false, false, false],
+  ["Dump 到 batch JSON 往返", true, false, false, false],
+  ["实时预览自动刷新", true, false, false, false],
+  ["无头 / CI 环境", true, false, "部分支持", true],
+  ["Word + Excel + PowerPoint", true, true, true, "需要多个库"],
+] as const;
+
+const agentPoints = [
+  {
+    icon: "ph-brackets-curly",
+    title: "确定性 JSON 输出",
+    desc: "每条命令支持 --json，schema 一致，无需正则解析 stdout。",
+  },
+  {
+    icon: "ph-tree-structure",
+    title: "稳定路径寻址",
+    desc: "每个元素都有稳定路径，智能体不必理解 XML 命名空间。",
+  },
+  {
+    icon: "ph-stack",
+    title: "渐进式复杂度",
+    desc: "从只读视图到 DOM 操作，必要时才降到 raw XML，节省 token。",
+  },
+  {
+    icon: "ph-arrows-counter-clockwise",
+    title: "自愈式错误恢复",
+    desc: "结构化错误码带 suggestion 和有效范围，智能体自行纠错。",
+  },
+];
+---
+
+<Layout>
+  <!-- ============ Hero ============ -->
+  <section class="wrap pt-16 pb-20 md:pt-24">
+    <div class="grid gap-12 lg:grid-cols-[1fr_1.15fr] items-center">
+      <div>
+        <h1 class="m-0 font-bold tracking-tighter" style="font-size: clamp(40px, 6vw, 64px); line-height: 1.05">
+          AI 智能体的<br />
+          <span style="color: var(--accent)">Office 套件</span>
+        </h1>
+        <p class="mt-6 text-[17px] leading-relaxed max-w-[46ch]" style="color: var(--dim)">
+          开源免费，单一可执行文件，零依赖。一行命令创建、读取、修改 Word、Excel 和 PowerPoint，内置渲染引擎让 AI 看见自己的产出。
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="#install" class="btn btn-solid no-underline">
+            <i class="ph ph-download" aria-hidden="true"></i>
+            安装 OfficeCLI
+          </a>
+          <a
+            href={site.github}
+            target="_blank"
+            rel="noopener"
+            class="btn btn-ghost no-underline"
+          >
+            <i class="ph ph-github-logo" aria-hidden="true"></i>
+            GitHub
+          </a>
+        </div>
+      </div>
+      <HeroTerm />
+    </div>
+  </section>
+
+  <!-- ============ 能力矩阵 ============ -->
+  <section class="wrap" id="formats">
+    <h2 class="sec-title">三种格式，读写改一网打尽</h2>
+    <p class="sec-sub">
+      创建、读取、分析、修改、重组，五类操作覆盖每一份文档。所有能力内置在单个二进制里，无需安装 Office。
+    </p>
+
+    <div class="panel mt-10 overflow-x-auto">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>格式</th>
+            <th><i class="ph ph-eye" aria-hidden="true"></i> 读取</th>
+            <th><i class="ph ph-wrench" aria-hidden="true"></i> 修改</th>
+            <th><i class="ph ph-circles-three" aria-hidden="true"></i> 创建</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            formatFeatures.map((f) => (
+              <tr>
+                <td>
+                  <span class="inline-flex items-center gap-2.5 font-semibold">
+                    <i class={`ph ${f.icon} text-[20px]`} style="color: var(--accent)" aria-hidden="true" />
+                    {f.format}
+                    <code class="code-inline">{f.file}</code>
+                  </span>
+                </td>
+                <td><i class="ph ph-check text-[18px]" style="color: var(--accent)" aria-hidden="true" /></td>
+                <td><i class="ph ph-check text-[18px]" style="color: var(--accent)" aria-hidden="true" /></td>
+                <td><i class="ph ph-check text-[18px]" style="color: var(--accent)" aria-hidden="true" /></td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-10 grid gap-8 md:grid-cols-3">
+      {
+        formatFeatures.map((f) => (
+          <div>
+            <h3 class="m-0 text-[14px] font-semibold flex items-center gap-2">
+              <i class={`ph ${f.icon}`} style="color: var(--accent)" aria-hidden="true" />
+              {f.format}
+              <a
+                href={site.wikiFormat(f.reference)}
+                target="_blank"
+                rel="noopener"
+                class="text-[12px] font-normal no-underline hover:underline"
+                style="color: var(--dim)"
+              >
+                完整参考
+              </a>
+            </h3>
+            <ul class="mt-4 flex flex-wrap gap-2 list-none p-0 m-0">
+              {f.features.map((it) => (
+                <li>
+                  <a
+                    class="chip no-underline hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors"
+                    href={`${site.wiki}/${it.wiki}`}
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    {it.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- ============ 演示画廊 ============ -->
+  <section class="wrap pt-24" id="showcase">
+    <h2 class="sec-title">全部由 AI 智能体自动生成</h2>
+    <p class="sec-sub">
+      以下文档由智能体使用 OfficeCLI 全自动创建，无模板、无人工编辑。左右滑动查看更多。
+    </p>
+    <div class="gallery mt-10">
+      {
+        showcase.map((s) => (
+          <figure class="panel m-0 overflow-hidden w-[300px] md:w-[380px]">
+            <img src={s.src} alt={s.alt} loading="lazy" class="block w-full" />
+            <figcaption class="px-4 py-3 text-[13px] font-mono" style="border-top: 1px solid var(--line); color: var(--dim)">
+              {s.label}
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- ============ 核心引擎 bento ============ -->
+  <section class="wrap pt-24" id="engine">
+    <h2 class="sec-title">四个内置引擎</h2>
+    <p class="sec-sub">自包含，无需 Office。渲染、求值、合并、往返，全在二进制里完成。</p>
+
+    <div class="mt-10 grid gap-5 md:grid-cols-2">
+      <!-- 渲染引擎：大格 -->
+      <div class="panel md:col-span-2 p-7 grid gap-7 lg:grid-cols-[1fr_1.1fr] items-center">
+        <div>
+          <h3 class="m-0 text-[20px] font-bold flex items-center gap-2.5">
+            <i class="ph ph-eye text-[24px]" style="color: var(--accent)" aria-hidden="true"></i>
+            高保真渲染引擎
+          </h3>
+          <p class="mt-3.5 text-[15px] leading-relaxed" style="color: var(--dim)">
+            从零实现的 HTML 渲染引擎，让智能体「看见」渲染后的文档，而不是凭 DOM 猜。形状、图表、公式、3D 模型、morph 过渡全覆盖，CI、Docker、无显示器服务器都能跑。
+          </p>
+          <div class="mt-5 flex flex-wrap gap-2">
+            <span class="chip"><code class="code-inline !bg-transparent !p-0">view html</code> 独立 HTML</span>
+            <span class="chip"><code class="code-inline !bg-transparent !p-0">view screenshot</code> 按页 PNG</span>
+            <span class="chip"><code class="code-inline !bg-transparent !p-0">watch</code> 实时预览</span>
+          </div>
+        </div>
+        <Term html={termRender} class="text-[12.5px]" />
+      </div>
+
+      <!-- 公式与透视 -->
+      <div class="panel p-7" style="background: color-mix(in srgb, var(--accent) 5%, var(--panel))">
+        <h3 class="m-0 text-[20px] font-bold flex items-center gap-2.5">
+          <i class="ph ph-table text-[24px]" style="color: var(--accent)" aria-hidden="true"></i>
+          公式与透视引擎
+        </h3>
+        <p class="mt-3.5 text-[15px] leading-relaxed" style="color: var(--dim)">
+          <strong style="color: var(--ink)">350+ 函数写入即求值</strong>，写 <code class="code-inline">=SUM(A1:A2)</code> 立刻能读到结果。动态数组、财务债券、统计检验全覆盖，一条命令生成原生 OOXML 数据透视表。
+        </p>
+        <Term html={termPivot} class="mt-5 text-[12px]" />
+      </div>
+
+      <!-- 模板合并 -->
+      <div class="panel p-7">
+        <h3 class="m-0 text-[20px] font-bold flex items-center gap-2.5">
+          <i class="ph ph-brackets-curly text-[24px]" style="color: var(--accent)" aria-hidden="true"></i>
+          模板合并
+        </h3>
+        <p class="mt-3.5 text-[15px] leading-relaxed" style="color: var(--dim)">
+          设计一次版式，填充 N 次。段落、表格、形状、页眉页脚里的 <code class="code-inline">{"{{key}}"}</code> 占位符由 JSON 数据替换，零 token 成本，版式永远一致。
+        </p>
+        <Term html={termMerge} class="mt-5 text-[12px]" />
+      </div>
+
+      <!-- Dump 往返 -->
+      <div class="panel md:col-span-2 p-7 grid gap-7 lg:grid-cols-[1.1fr_1fr] items-center">
+        <Term html={termDump} class="text-[12.5px] order-2 lg:order-1" />
+        <div class="order-1 lg:order-2">
+          <h3 class="m-0 text-[20px] font-bold flex items-center gap-2.5">
+            <i class="ph ph-arrows-counter-clockwise text-[24px]" style="color: var(--accent)" aria-hidden="true"></i>
+            Dump 往返
+          </h3>
+          <p class="mt-3.5 text-[15px] leading-relaxed" style="color: var(--dim)">
+            给智能体一份想模仿的范本，它读结构化规格而不是原始 OOXML。任意子树都可导出，修改后重放，打通「现成模板」到「一百份变体」的链路。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 三层架构 ============ -->
+  <section class="wrap pt-24" id="layers">
+    <h2 class="sec-title">三层架构，按需深入</h2>
+    <p class="sec-sub">从简单开始，仅在需要时深入。智能体逐层升级，最大限度节省 token。</p>
+
+    <div class="mt-10 space-y-5">
+      {
+        [
+          {
+            tag: "L1 读取",
+            desc: "内容的语义视图：大纲、纯文本、统计、问题清单、HTML、PNG 截图。",
+            code: "officecli view report.docx annotated",
+          },
+          {
+            tag: "L2 DOM",
+            desc: "结构化元素操作，基于稳定路径增删改查、移动、交换。",
+            code: 'officecli query report.docx "run:contains(TODO)"',
+          },
+          {
+            tag: "L3 原始 XML",
+            desc: "XPath 直接访问，L2 不够时的通用兜底。",
+            code: "officecli raw deck.pptx '/slide[1]'",
+          },
+        ].map((l) => (
+          <div class="panel p-6 grid gap-4 lg:grid-cols-[130px_1fr_1.1fr] items-center">
+            <span class="font-mono font-bold text-[15px]" style="color: var(--accent)">{l.tag}</span>
+            <p class="m-0 text-[14.5px] leading-relaxed" style="color: var(--dim)">{l.desc}</p>
+            <code class="code-inline block overflow-x-auto" style="padding: 10px 14px; font-size: 12.5px">{l.code}</code>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- ============ AI 集成 ============ -->
+  <section class="wrap pt-24" id="agents">
+    <h2 class="sec-title">智能体接入，一条命令</h2>
+    <p class="sec-sub">
+      内置 MCP 服务器，自动检测 Claude Code、Cursor、VS Code 等工具并安装技能文件，零配置。
+    </p>
+
+    <div class="mt-10 grid gap-8 lg:grid-cols-[1fr_1fr] items-start">
+      <div class="grid gap-5 sm:grid-cols-2">
+        {
+          agentPoints.map((p) => (
+            <div>
+              <h3 class="m-0 text-[15.5px] font-bold flex items-center gap-2">
+                <i class={`ph ${p.icon} text-[20px]`} style="color: var(--accent)" aria-hidden="true" />
+                {p.title}
+              </h3>
+              <p class="mt-2 m-0 text-[14px] leading-relaxed" style="color: var(--dim)">{p.desc}</p>
+            </div>
+          ))
+        }
+      </div>
+      <Term bar="接入示例" icon="ph-robot" html={termAgents} class="text-[12.5px]" />
+    </div>
+
+    <div class="mt-10 flex flex-wrap gap-2.5">
+      <span class="chip"><i class="ph ph-database" aria-hidden="true"></i> 数据库报告自动生成</span>
+      <span class="chip"><i class="ph ph-arrows-left-right" aria-hidden="true"></i> 批量查找替换与样式更新</span>
+      <span class="chip"><i class="ph ph-rocket-launch" aria-hidden="true"></i> CI/CD 文档流水线</span>
+      <span class="chip"><i class="ph ph-cursor-click" aria-hidden="true"></i> Docker 无头自动化</span>
+      <span class="chip"><i class="ph ph-list-checks" aria-hidden="true"></i> 交付前质量校验</span>
+      <span class="chip"><i class="ph ph-binoculars" aria-hidden="true"></i> 文档提取结构化 JSON</span>
+    </div>
+  </section>
+
+  <!-- ============ 对比 ============ -->
+  <section class="wrap pt-24" id="compare">
+    <h2 class="sec-title">和现有方案比一比</h2>
+    <p class="sec-sub">以前需要 50 行 Python 和三个独立库，现在一条命令。</p>
+
+    <div class="panel mt-10 overflow-x-auto">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th></th>
+            <th style="color: var(--accent); font-weight: 700">OfficeCLI</th>
+            <th>Microsoft Office</th>
+            <th>LibreOffice</th>
+            <th>python-docx 系</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            compareRows.map((row) => (
+              <tr>
+                <td class="font-medium">{row[0]}</td>
+                <td style="background: color-mix(in srgb, var(--accent) 6%, transparent)">
+                  {row[1] === true ? (
+                    <i class="ph ph-check text-[18px]" style="color: var(--accent)" aria-hidden="true" />
+                  ) : (
+                    <span class="font-medium" style="color: var(--accent)">{row[1]}</span>
+                  )}
+                </td>
+                {row.slice(2).map((cell) => (
+                  <td style="color: var(--dim)">
+                    {cell === true ? (
+                      <i class="ph ph-check text-[18px]" style="color: var(--dim)" aria-hidden="true" />
+                    ) : cell === false ? (
+                      <i class="ph ph-x text-[18px] opacity-60" aria-hidden="true" />
+                    ) : (
+                      cell
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ 安装 ============ -->
+  <section class="wrap pt-24" id="install">
+    <h2 class="sec-title">安装</h2>
+    <p class="sec-sub">
+      单一自包含可执行文件，.NET 运行时已内嵌，无需安装任何依赖。装完跑 <code class="code-inline">officecli install</code>，技能文件自动进入检测到的所有 AI 编程助手。
+    </p>
+
+    <div class="mt-10 grid gap-5 md:grid-cols-3">
+      <div class="panel p-6">
+        <h3 class="m-0 text-[15.5px] font-bold flex items-center gap-2">
+          <i class="ph ph-download text-[20px]" style="color: var(--accent)" aria-hidden="true"></i>
+          一键脚本
+        </h3>
+        <Term bar="脚本" html={termInstallScript} wrap class="text-[11.5px] mt-4" />
+      </div>
+
+      <div class="panel p-6">
+        <h3 class="m-0 text-[15.5px] font-bold flex items-center gap-2">
+          <i class="ph ph-package text-[20px]" style="color: var(--accent)" aria-hidden="true"></i>
+          包管理器
+        </h3>
+        <Term bar="包管理器" icon="ph-package" html={termPkg} class="text-[12px] mt-4" />
+      </div>
+
+      <div class="panel p-6">
+        <h3 class="m-0 text-[15.5px] font-bold flex items-center gap-2">
+          <i class="ph ph-magnifying-glass text-[20px]" style="color: var(--accent)" aria-hidden="true"></i>
+          手动下载
+        </h3>
+        <p class="mt-3 text-[14px] leading-relaxed" style="color: var(--dim)">
+          六个平台的原生二进制，从 GitHub Releases 获取，下载即用：
+        </p>
+        <ul class="mt-4 space-y-2 list-none p-0 m-0 text-[13px] font-mono" style="color: var(--dim)">
+          <li>officecli-mac-arm64</li>
+          <li>officecli-mac-x64</li>
+          <li>officecli-linux-x64</li>
+          <li>officecli-linux-arm64</li>
+          <li>officecli-win-x64.exe</li>
+          <li>officecli-win-arm64.exe</li>
+        </ul>
+        <a href={site.releases} target="_blank" rel="noopener" class="btn btn-ghost mt-5 no-underline !py-2.5 !px-4 !text-[14px]">
+          GitHub Releases
+          <i class="ph ph-arrow-right" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+
+    <Term bar="快速上手" icon="ph-terminal-window" html={termQuick} class="mt-5 text-[12.5px]" />
+  </section>
+
+  <!-- ============ 命令参考 ============ -->
+  <section class="wrap pt-24" id="commands">
+    <h2 class="sec-title">命令参考</h2>
+    <p class="sec-sub">
+      二十余条命令按用途分三组，点击任意命令查看 Wiki 详细指南。拿不准属性名时跑 <code class="code-inline">officecli help pptx set shape</code>。
+    </p>
+
+    <div class="mt-10 grid gap-8 md:grid-cols-3">
+      {
+        commandGroups.map((group) => (
+          <div>
+            <h3 class="m-0 text-[14px] font-semibold" style="color: var(--dim)">{group.title}</h3>
+            <ul class="mt-4 space-y-3 list-none p-0 m-0">
+              {group.items.map((cmd) => (
+                <li>
+                  <a
+                    href={cmd.wiki ? site.wikiCommand(cmd.wiki) : site.wiki}
+                    target="_blank"
+                    rel="noopener"
+                    class="no-underline hover:text-[var(--accent)] transition-colors"
+                  >
+                    <code class="code-inline" style="color: var(--accent)">{cmd.name}</code>
+                    <span class="ml-2 text-[13.5px]" style="color: var(--dim)">{cmd.desc}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- ============ 底部 CTA ============ -->
+  <section class="wrap pt-24">
+    <div class="panel p-10 md:p-14 text-center" style="background: color-mix(in srgb, var(--accent) 6%, var(--panel))">
+      <h2 class="sec-title m-0">觉得好用，点个 Star</h2>
+      <p class="sec-sub mx-auto mt-4">帮助更多人发现 OfficeCLI。Bug 与贡献欢迎提交 GitHub Issues。</p>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <a href={site.github} target="_blank" rel="noopener" class="btn btn-solid no-underline">
+          <i class="ph ph-github-logo" aria-hidden="true"></i>
+          给 OfficeCLI 点 Star
+        </a>
+        <a href={site.wiki} target="_blank" rel="noopener" class="btn btn-ghost no-underline">
+          阅读 Wiki 文档
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,27 @@
+---
+import Layout from "../layouts/Base.astro";
+---
+
+<Layout>
+  <section class="wrap pt-32 pb-24 text-center">
+    <p class="font-mono text-[15px] m-0" style="color: var(--accent)">404</p>
+    <h1 class="m-0 mt-4 font-bold tracking-tighter" style="font-size: clamp(32px, 5vw, 52px)">
+      这个路径不存在
+    </h1>
+    <p class="mt-5 text-[16px]" style="color: var(--dim)">
+      试试回首页，或者直接去 GitHub 看官方仓库。
+    </p>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a href="/" class="btn btn-solid no-underline">回首页</a>
+      <a
+        href="https://github.com/iOfficeAI/OfficeCLI"
+        target="_blank"
+        rel="noopener"
+        class="btn btn-ghost no-underline"
+      >
+        <i class="ph ph-github-logo" aria-hidden="true"></i>
+        GitHub
+      </a>
+    </div>
+  </section>
+</Layout>
